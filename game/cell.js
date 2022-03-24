@@ -7,31 +7,11 @@ export class Cell {
 
     // ライフの存在、非存在を反転させる
     toggle() {
-        if (this.isAlive == false) {
-            this.isAlive = true;
-        }
-        else {
-            this.isAlive = false;
-        }
+        // TODO
     }
 
     // 周囲のライフの数を元に次の世代での生死を決定
     judgeSurvive(aroundLife) {
-        if (this.isAlive == true) {
-            if (aroundLife == 2 || aroundLife == 3) {
-                this.nextStatus = true;
-            }
-            else if (aroundLife <= 1) {
-                this.nextStatus = false;
-            }
-            else if (aroundLife >= 4) {
-                this.nextStatus = false;
-            }
-        }
-        else {
-            if (aroundLife == 3) {
-                this.nextStatus = true;
-            }
-        }
+        // TODO
     }
 }
