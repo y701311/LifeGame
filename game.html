@@ -17,7 +17,257 @@
         <input class="button" type="button" value="reset" id="resetButton">
     </div>
 
-    <script type="module" src="./app.js"></script>
+    <script>
+        // ライフがある、ない時の色
+        const ALIVE = "#204080", NOT_ALIVE = "#FFFFFF";
+        // Canvasのマスの数
+        const FIELD_WIDTH = 30, FIELD_HEIGHT = 30;
+        // Canvasのピクセル単位での大きさ
+        const CANVAS_WIDTH = 600, CANVAS_HEIGHT = 600;
+        // Canvasの線の色
+        const LINE_COLOR = "#262626"
+        // Canvasの線の太さ
+        const LINE_WIDTH = 0.2;
+
+        // xは0以上横幅未満、yは0以上縦幅未満の値をとる
+        class Location {
+            constructor(x = 0, y = 0) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        class Cell {
+            constructor() {
+                this.isAlive = false;
+                // 次の世代での生死
+                this.nextStatus = false;
+            }
+
+            // ライフの存在、非存在を反転させる
+            toggle() {
+                // TODO
+            }
+
+            // 周囲のライフの数を元に次の世代での生死を決定
+            judgeSurvive(aroundLife) {
+                // TODO
+            }
+        }
+
+        class Field {
+            constructor(width, height) {
+                this.width = width;
+                this.height = height;
+                this.field = new Array(height);
+                for (let y = 0; y < height; y++) {
+                    this.field[y] = new Array(width);
+                    for (let x = 0; x < width; x++) {
+                        this.field[y][x] = new Cell()
+                    }
+                }
+            }
+
+            // 受け取った場所のライフの存在、非存在を反転させる
+            reverse(location) {
+                // TODO
+            }
+
+            // 受け取った場所の周囲のライフの数を数えて返す
+            countAroundLives(location) {
+                // TODO
+            }
+
+            // 盤面のライフの数を数えて返す
+            countLives() {
+                // TODO
+            }
+
+            // 盤面にライフが1つも無いか
+            isBlank() {
+                // TODO
+            }
+
+            // 盤面をライフが無い状態にする
+            clear() {
+                // TODO
+            }
+
+            // 次の世代に更新する
+            updateLivesStatus() {
+                // TODO
+            }
+        }
+
+        class Canvas {
+            constructor(id, width, height) {
+                this.xLineNum = width + 1;
+                this.yLineNum = height + 1;
+                // 小数点誤差により、CANVAS_WIDTHがwidthで割り切れないと線の描画がすこしずれる
+                this.cellSizeWidth = CANVAS_WIDTH / width;
+                this.cellSizeHeight = CANVAS_HEIGHT / height;
+                this.canvas = document.getElementById(id);
+                this.context = this.canvas.getContext("2d");
+                this.context.canvas.width = CANVAS_WIDTH;
+                this.context.canvas.height = CANVAS_HEIGHT;
+                this.width = this.context.canvas.width;
+                this.height = this.context.canvas.height;
+                this.clearAll();
+
+                this.clickFlag = true;
+
+                this.onClick = (location) => { };
+
+                this.canvas.onclick = (e) => {
+                    let point = this.getPoint(e);
+                    if (this.clickFlag) {
+                        this.onClick(point);
+                    }
+                };
+            }
+
+            getPoint(e) {
+                let rect = e.target.getBoundingClientRect();
+                let x = e.clientX - Math.floor(rect.left);
+                let y = e.clientY - Math.floor(rect.top);
+                x = Math.floor(x / this.cellSizeWidth);
+                y = Math.floor(y / this.cellSizeHeight);
+                return new Location(x, y);
+            }
+
+            drawPoint(location, color) {
+                this.context.fillStyle = color;
+                this.context.fillRect(location.x * this.cellSizeWidth + 1, location.y * this.cellSizeHeight + 1, this.cellSizeWidth - 2, this.cellSizeHeight - 2);
+            }
+
+            // 縦の罫線を描く
+            drawVirticalLine(x) {
+                this.context.strokeStyle = LINE_COLOR;
+                this.context.lineWidth = LINE_WIDTH;
+                this.context.beginPath();
+                this.context.moveTo(x, 0);
+                this.context.lineTo(x, this.height);
+                this.context.closePath();
+                this.context.stroke();
+            }
+
+            // 横の罫線を描く
+            drawHorizontialLine(y) {
+                this.context.strokeStyle = LINE_COLOR;
+                this.context.lineWidth = LINE_WIDTH;
+                this.context.beginPath();
+                this.context.moveTo(0, y);
+                this.context.lineTo(this.width, y);
+                this.context.closePath();
+                this.context.stroke();
+            }
+
+            // 全てクリア
+            clearAll() {
+                this.context.clearRect(0, 0, this.width, this.height);
+                for (let x = 0; x < this.xLineNum; x++) {
+                    this.drawVirticalLine(x * this.cellSizeWidth);
+                }
+                for (let y = 0; y < this.yLineNum; y++) {
+                    this.drawHorizontialLine(y * this.cellSizeHeight);
+                }
+            }
+
+            // 指定された場所のセルの状態を描画
+            drawCell(location, cell) {
+                if (cell.isAlive) {
+                    this.drawPoint(location, ALIVE);
+                } else {
+                    this.drawPoint(location, NOT_ALIVE);
+                }
+            }
+        }
+
+        class Environment {
+            constructor(field, canvas) {
+                this.field = field;
+                this.canvas = canvas;
+
+                this.timer = {};
+
+                this.canvas.onClick = (location) => {
+                    this.field.reverse(location);
+                    this.canvas.drawCell(location, this.field.field[location.y][location.x]);
+                };
+            }
+
+            // 世代の更新を開始
+            start() {
+                // 操作が加わっていたらクリック不可に
+                if (this.field.isBlank() == false) {
+                    this.canvas.clickFlag = false;
+                }
+                clearInterval(this.timer);
+                this.timer = setInterval(() => {
+                    let livesNum = this.field.countLives();
+                    if (livesNum == 0) {
+                        this.stop();
+                    } else {
+                        this.field.updateLivesStatus()
+                        for (let y = 0; y < this.field.height; y++) {
+                            for (let x = 0; x < this.field.width; x++) {
+                                this.canvas.drawCell(new Location(x, y), this.field.field[y][x]);
+                            }
+                        }
+                    }
+                }, 200);
+            }
+
+            // 世代の更新を止める
+            stop() {
+                clearInterval(this.timer);
+            }
+
+            // フィールドのライフを全て消す
+            reset() {
+                this.canvas.clickFlag = true;
+                this.canvas.clearAll();
+                this.field.clear();
+            }
+        }
+
+        class App {
+            constructor() {
+                // 盤面の広さ
+                this.width = FIELD_WIDTH, this.height = FIELD_HEIGHT;
+                // ゲームを進める環境
+                this.environment = new Environment(new Field(this.width, this.height), new Canvas("gameCanvas", this.width, this.height));
+            }
+
+            run() {
+                document.getElementById("startButton").addEventListener("click", () => this.start(), false);
+                document.getElementById("stopButton").addEventListener("click", () => this.stop(), false);
+                document.getElementById("resetButton").addEventListener("click", () => this.reset(), false);
+            }
+
+            start() {
+                this.environment.start();
+            }
+
+            stop() {
+                this.environment.stop();
+            }
+
+            reset() {
+                this.environment.stop();
+                this.environment.reset();
+            }
+        }
+
+        function main() {
+            window.onload = function () {
+                let app = new App();
+                app.run();
+            };
+        }
+
+        main();
+    </script>
 </body>
 
 </html>
