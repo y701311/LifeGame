@@ -33,17 +33,17 @@ export class Environment {
                 }
             }
         }, 200);
-    };
+    }
 
     // 世代の更新を止める
     stop() {
         clearInterval(this.timer);
-    };
+    }
 
     // フィールドのライフを全て消す
     reset() {
         this.canvas.clickFlag = true;
         this.canvas.clearAll();
         this.field.clear();
-    };
+    }
 }

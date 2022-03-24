@@ -17,7 +17,7 @@ export class Field {
     // 受け取った場所のライフの存在、非存在を反転させる
     reverse(location) {
         this.field[location.y][location.x].toggle();
-    };
+    }
 
     // 受け取った場所の周囲のライフの数を数えて返す
     countAroundLives(location) {
@@ -71,7 +71,7 @@ export class Field {
             }
         }
         return aroundLives;
-    };
+    }
 
     // 盤面のライフの数を数えて返す
     countLives() {
@@ -84,7 +84,7 @@ export class Field {
             }
         }
         return livesNum;
-    };
+    }
 
     // 盤面にライフが1つも無いか
     isBlank() {
@@ -112,7 +112,7 @@ export class Field {
                 }
             }
         }
-    };
+    }
 
     // 次の世代に更新する
     updateLivesStatus() {
@@ -127,5 +127,5 @@ export class Field {
                 this.field[y][x].isAlive = this.field[y][x].nextStatus;
             }
         }
-    };
+    }
 }

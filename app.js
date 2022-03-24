@@ -15,20 +15,20 @@ class App {
         document.getElementById("startButton").addEventListener("click", () => this.start(), false);
         document.getElementById("stopButton").addEventListener("click", () => this.stop(), false);
         document.getElementById("resetButton").addEventListener("click", () => this.reset(), false);
-    };
+    }
 
     start() {
         this.environment.start();
-    };
+    }
 
     stop() {
         this.environment.stop();
-    };
+    }
 
     reset() {
         this.environment.stop();
         this.environment.reset();
-    };
+    }
 }
 
 function main() {

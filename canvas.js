@@ -35,12 +35,12 @@ export class Canvas {
         x = Math.floor(x / this.cellSizeWidth);
         y = Math.floor(y / this.cellSizeHeight);
         return new Location(x, y);
-    };
+    }
 
     drawPoint(location, color) {
         this.context.fillStyle = color;
         this.context.fillRect(location.x * this.cellSizeWidth + 1, location.y * this.cellSizeHeight + 1, this.cellSizeWidth - 2, this.cellSizeHeight - 2);
-    };
+    }
 
     // 縦の罫線を描く
     drawVirticalLine(x) {
@@ -51,7 +51,7 @@ export class Canvas {
         this.context.lineTo(x, this.height);
         this.context.closePath();
         this.context.stroke();
-    };
+    }
 
     // 横の罫線を描く
     drawHorizontialLine(y) {
@@ -62,7 +62,7 @@ export class Canvas {
         this.context.lineTo(this.width, y);
         this.context.closePath();
         this.context.stroke();
-    };
+    }
 
     // 全てクリア
     clearAll() {
@@ -73,7 +73,7 @@ export class Canvas {
         for (let y = 0; y < this.yLineNum; y++) {
             this.drawHorizontialLine(y * this.cellSizeHeight);
         }
-    };
+    }
 
     // 指定された場所のセルの状態を描画
     drawCell(location, cell) {
@@ -82,5 +82,5 @@ export class Canvas {
         } else {
             this.drawPoint(location, NOT_ALIVE);
         }
-    };
+    }
 }

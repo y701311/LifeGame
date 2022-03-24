@@ -13,7 +13,7 @@ export class Cell {
         else {
             this.isAlive = false;
         }
-    };
+    }
 
     // 周囲のライフの数を元に次の世代での生死を決定
     judgeSurvive(aroundLife) {
@@ -33,5 +33,5 @@ export class Cell {
                 this.nextStatus = true;
             }
         }
-    };
+    }
 }
